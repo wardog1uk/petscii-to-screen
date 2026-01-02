@@ -73,5 +73,13 @@ convert_shifted_printable:
 !:  // remove top bit to subtract 128
     and #%01111111
 
-    rts
+    // is 32 to 127 (was 160 to 254)
+    // return if >= 64 (was 192)
+    cmp #64
+    bcs !+
+
+    // else add 64 to 32 to 63 (was 160 to 191)
+    eor #%01000000
+
+!:  rts
 // --------------------------------------------------------
