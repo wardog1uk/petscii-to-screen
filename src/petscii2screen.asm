@@ -52,12 +52,26 @@ convert_shifted:
     // remove top bit to subtract 128
     and #%01111111
 
-    // check if it was 255
+    // check if printable (>31)
+    cmp #32
+
+    // branch if printable
+    bcs convert_shifted_printable
+
+    // else set to 0 and return
+    lda #0
+    rts
+
+
+// Convert petscii codes 32 to 127 (was 160 to 255)
+convert_shifted_printable:
+    // check if it was 255 (pi)
     cmp #127
     bne !+
 
-    // was 255 (pi) so make it the correct screen character
+    // was 255 so make it the correct screen value
     lda #94
+    rts
 
 !:
     rts
