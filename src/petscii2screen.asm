@@ -49,6 +49,16 @@ convert_unshifted_characters:
 // --------------------------------------------------------
 // Convert petscii codes 128 to 255 to screen code
 convert_shifted:
-    // TODO
+    // remove top bit to subtract 128
+    and #%01111111
+
+    // check if it was 255
+    cmp #127
+    bne !+
+
+    // was 255 (pi) so make it the correct screen character
+    lda #94
+
+!:
     rts
 // --------------------------------------------------------
