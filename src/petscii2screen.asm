@@ -79,7 +79,7 @@ convert_shifted_printable:
     bcs !+
 
     // else add 64 to 32 to 63 (was 160 to 191)
-    eor #%01000000
+    ora #%01000000
 
 !:  rts
 // --------------------------------------------------------
