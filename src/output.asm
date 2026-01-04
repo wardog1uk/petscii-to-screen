@@ -1,21 +1,41 @@
-*=* "Output"
+.const POINTER = $fb
 
+.const TITLE_TEXT = "petscii to screen code"
+
+TITLE:
+    .text TITLE_TEXT
+    .byte 0
+
+
+*=* "Output"
 output:
+    jsr clear_screen
+
+    // output header
+    lda #40
+    sta POINTER
+    lda #$04
+    sta POINTER+1
+
+    ldy #(40-TITLE_TEXT.size())/2
     ldx #0
 
-    .var list = List().add(255, 'H', 'I', '!', 115, 160, 176, 99, 99, 99, 174)
-    .var n = 0
-    .while(n < list.size()) {
-        lda #list.get(n)
-        jsr process
-        .eval n++
-    }
+!:  lda TITLE,x
+    beq !+
+    sta (POINTER),y
+    iny
+    inx
+    clc
+    bcc !-
 
+!:
     rts
 
 
-process:
-    jsr convert_to_screen
-    sta $0400,x
+clear_screen:
+    ldx #0
+!:  jsr $e9ff
     inx
+    cpx #25
+    bne !-
     rts
