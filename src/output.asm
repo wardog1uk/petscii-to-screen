@@ -73,6 +73,13 @@ output_loop:
 !:  cmp #RETURN
     bne output_loop
 
+    jsr clear_screen
+
+    // reset basic cursor
+    ldy #0
+    sty $d3
+    sty $d6
+
     rts
 
 
