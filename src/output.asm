@@ -92,18 +92,19 @@ output_controls:
     sta POINTER+1
 
     // left arrow
-    lda #$3c
     ldy #17
+    lda #$3c
     sta (POINTER),y
 
     // number
+    iny
+    iny
     lda POSITION
-    ldy #19
     jsr output_byte
 
     // right arrow
+    iny
     lda #$3e
-    ldy #22
     sta (POINTER),y
 
     rts
