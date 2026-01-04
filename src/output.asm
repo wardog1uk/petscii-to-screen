@@ -12,6 +12,9 @@ TITLE:
 
 *=* "Output"
 output:
+    lda #0
+    sta POSITION
+
     jsr clear_screen
 
     // output header
@@ -82,8 +85,44 @@ output_controls:
 
 // outputs hex byte to POINTER + y offset 
 output_byte:
+    // save byte
+    pha
+
+    // shift high byte to low byte
+    lsr
+    lsr
+    lsr
+    lsr
+
+    // output high byte
+    jsr byte_to_char
     sta (POINTER),y
     iny
+
+    // restore byte
+    pla
+
+    // output low byte
+    jsr byte_to_char
     sta (POINTER),y
     iny
+
     rts
+
+
+// convert low byte to screen code
+byte_to_char:
+    // mask off high byte
+    and #$0f
+
+    // add '0'
+    ora #'0'
+
+    // check if > 9
+    cmp #'9'+1
+    bcc !+
+
+    // if > 9 then convert to 'a' to 'f' 
+    sbc #'9'
+
+!:  rts
