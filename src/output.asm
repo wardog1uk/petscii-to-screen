@@ -54,11 +54,19 @@ output_loop:
     // process input
     cmp #ARROW_RIGHT
     bne !+
+    lda POSITION
+    clc
+    adc #$20
+    sta POSITION
     clc
     bcc output_loop
 
 !:  cmp #ARROW_LEFT
     bne !+
+    lda POSITION
+    sec
+    sbc #$20
+    sta POSITION
     clc
     bcc output_loop
 
