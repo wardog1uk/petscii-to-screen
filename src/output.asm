@@ -1,5 +1,8 @@
 .const POINTER = $fb
 
+// zp address for the first byte to display
+.const POSITION = $02
+
 .const TITLE_TEXT = "petscii to screen code"
 
 TITLE:
@@ -65,15 +68,22 @@ output_controls:
     sta (POINTER),y
 
     // number
-    lda #'x'
+    lda POSITION
     ldy #19
-    sta (POINTER),y
-    iny
-    sta (POINTER),y
+    jsr output_byte
 
     // right arrow
     lda #$3e
     ldy #22
     sta (POINTER),y
 
+    rts
+
+
+// outputs hex byte to POINTER + y offset 
+output_byte:
+    sta (POINTER),y
+    iny
+    sta (POINTER),y
+    iny
     rts
