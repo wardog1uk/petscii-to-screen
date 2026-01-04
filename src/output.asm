@@ -3,6 +3,11 @@
 // zp address for the first byte to display
 .const POSITION = $02
 
+// key codes
+.const ARROW_RIGHT = $1d
+.const ARROW_LEFT = $9d
+.const RETURN = $0d
+
 .const TITLE_TEXT = "petscii to screen code"
 
 TITLE:
@@ -27,14 +32,15 @@ output:
     ldx #0
 
 !:  lda TITLE,x
-    beq !+
+    beq output_loop
     sta (POINTER),y
     iny
     inx
     clc
     bcc !-
 
-!:
+
+output_loop:
     // draw screen
 
     // output data
@@ -45,7 +51,19 @@ output:
 !:  jsr $ffe4
     beq !-
 
-    // handle input
+    // process input
+    cmp #ARROW_RIGHT
+    bne !+
+    clc
+    bcc output_loop
+
+!:  cmp #ARROW_LEFT
+    bne !+
+    clc
+    bcc output_loop
+
+!:  cmp #RETURN
+    bne output_loop
 
     rts
 
