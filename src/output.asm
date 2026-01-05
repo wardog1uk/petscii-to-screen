@@ -3,6 +3,9 @@
 // zp address for the first byte to display
 .const POSITION = $02
 
+// zp address for general usage
+.const TEMP = $fd
+
 // key codes
 .const ARROW_RIGHT = $1d
 .const ARROW_LEFT = $9d
@@ -99,9 +102,31 @@ output_data:
     lda #$04
     sta POINTER+1
 
+    // copy position to temporary variable
+    lda POSITION
+    sta TEMP
+
     // output byte
     ldy #13
-    lda POSITION
+    jsr output_byte
+
+    // output converted byte
+    iny
+    jsr convert_to_screen
+    jsr output_byte
+
+    inc TEMP
+
+    lda POINTER
+    clc
+    adc #40
+    bcc !+
+    inc POINTER+1
+!:  sta POINTER
+
+    // output byte
+    ldy #13
+    lda TEMP
     jsr output_byte
 
     // output converted byte
