@@ -43,7 +43,7 @@ output:
 output_loop:
     // draw screen
 
-    // output data
+    jsr output_data
 
     jsr output_controls
 
@@ -92,6 +92,26 @@ clear_screen:
     rts
 
 
+output_data:
+    // output header
+    lda #$c8
+    sta POINTER
+    lda #$04
+    sta POINTER+1
+
+    // output byte
+    ldy #13
+    lda POSITION
+    jsr output_byte
+
+    // output converted byte
+    iny
+    jsr convert_to_screen
+    jsr output_byte
+
+    rts
+
+
 output_controls:
     lda #$c0
     sta POINTER
@@ -121,6 +141,7 @@ output_controls:
 output_byte:
     // save byte
     pha
+    pha
 
     // shift high byte to low byte
     lsr
@@ -140,6 +161,8 @@ output_byte:
     jsr byte_to_char
     sta (POINTER),y
     iny
+
+    pla
 
     rts
 
