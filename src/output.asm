@@ -96,34 +96,19 @@ clear_screen:
 
 
 output_data:
-    // output header
+    // copy position to temporary variable
+    lda POSITION
+    sta TEMP
+
+    // point to first line
     lda #$c8
     sta POINTER
     lda #$04
     sta POINTER+1
 
-    // copy position to temporary variable
-    lda POSITION
-    sta TEMP
+    ldx #16
 
-    // output byte
-    ldy #13
-    jsr output_byte
-
-    // output converted byte
-    iny
-    jsr convert_to_screen
-    jsr output_byte
-
-    inc TEMP
-
-    lda POINTER
-    clc
-    adc #40
-    bcc !+
-    inc POINTER+1
-!:  sta POINTER
-
+output_data_loop:
     // output byte
     ldy #13
     lda TEMP
@@ -133,6 +118,19 @@ output_data:
     iny
     jsr convert_to_screen
     jsr output_byte
+
+    inc TEMP
+
+    // move to next line
+    lda POINTER
+    clc
+    adc #40
+    bcc !+
+    inc POINTER+1
+!:  sta POINTER
+
+    dex
+    bne output_data_loop
 
     rts
 
