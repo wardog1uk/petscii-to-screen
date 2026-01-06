@@ -5,6 +5,7 @@
 
 // zp address for general usage
 .const TEMP = $fd
+.const TEMP2 = $fe
 
 // key codes
 .const ARROW_RIGHT = $1d
@@ -96,9 +97,12 @@ clear_screen:
 
 
 output_data:
-    // copy position to temporary variable
+    // copy position to temporary variables
     lda POSITION
     sta TEMP
+    clc
+    adc #$10
+    sta TEMP2
 
     // point to first line
     lda #$c8
@@ -109,17 +113,23 @@ output_data:
     ldx #16
 
 output_data_loop:
-    // output byte
+    // output first column byte
     ldy #13
     lda TEMP
     jsr output_byte
-
-    // output converted byte
     iny
     jsr convert_to_screen
     jsr output_byte
-
     inc TEMP
+
+    // output second column byte
+    ldy #22
+    lda TEMP2
+    jsr output_byte
+    iny
+    jsr convert_to_screen
+    jsr output_byte
+    inc TEMP2
 
     // move to next line
     lda POINTER
