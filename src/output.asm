@@ -116,19 +116,19 @@ output_data_loop:
     // output first column byte
     ldy #13
     lda TEMP
-    jsr output_byte
+    jsr output_hex_byte
     iny
     jsr convert_to_screen
-    jsr output_byte
+    jsr output_hex_byte
     inc TEMP
 
     // output second column byte
     ldy #22
     lda TEMP2
-    jsr output_byte
+    jsr output_hex_byte
     iny
     jsr convert_to_screen
-    jsr output_byte
+    jsr output_hex_byte
     inc TEMP2
 
     // move to next line
@@ -160,7 +160,7 @@ output_controls:
     iny
     iny
     lda POSITION
-    jsr output_byte
+    jsr output_hex_byte
 
     // right arrow
     iny
@@ -171,7 +171,7 @@ output_controls:
 
 
 // outputs hex byte to POINTER + y offset 
-output_byte:
+output_hex_byte:
     // save byte
     pha
     pha
