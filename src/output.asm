@@ -114,19 +114,35 @@ output_data:
 
 output_data_loop:
     // output first column byte
-    ldy #13
+    ldy #11
+    lda #'$'
+    sta (POINTER),y
+    iny
     lda TEMP
     jsr output_hex_byte
     iny
+
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP
     jsr convert_to_screen
     jsr output_hex_byte
     inc TEMP
 
     // output second column byte
     ldy #22
+    lda #'$'
+    sta (POINTER),y
+    iny
     lda TEMP2
     jsr output_hex_byte
     iny
+
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP2
     jsr convert_to_screen
     jsr output_hex_byte
     inc TEMP2
