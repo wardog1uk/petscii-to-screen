@@ -3,6 +3,10 @@
 // zp address for the first byte to display
 .const POSITION = $02
 
+// zp address for general usage
+.const TEMP = $fd
+.const TEMP2 = $fe
+
 // key codes
 .const ARROW_RIGHT = $1d
 .const ARROW_LEFT = $9d
@@ -43,7 +47,7 @@ output:
 output_loop:
     // draw screen
 
-    // output data
+    jsr output_data
 
     jsr output_controls
 
@@ -92,6 +96,71 @@ clear_screen:
     rts
 
 
+output_data:
+    // copy position to temporary variables
+    lda POSITION
+    sta TEMP
+    clc
+    adc #$10
+    sta TEMP2
+
+    // point to first line
+    lda #$c8
+    sta POINTER
+    lda #$04
+    sta POINTER+1
+
+    ldx #16
+
+output_data_loop:
+    // output first column byte
+    ldy #11
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP
+    jsr output_hex_byte
+    iny
+
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP
+    jsr convert_to_screen
+    jsr output_hex_byte
+    inc TEMP
+
+    // output second column byte
+    ldy #22
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP2
+    jsr output_hex_byte
+    iny
+
+    lda #'$'
+    sta (POINTER),y
+    iny
+    lda TEMP2
+    jsr convert_to_screen
+    jsr output_hex_byte
+    inc TEMP2
+
+    // move to next line
+    lda POINTER
+    clc
+    adc #40
+    bcc !+
+    inc POINTER+1
+!:  sta POINTER
+
+    dex
+    bne output_data_loop
+
+    rts
+
+
 output_controls:
     lda #$c0
     sta POINTER
@@ -107,7 +176,7 @@ output_controls:
     iny
     iny
     lda POSITION
-    jsr output_byte
+    jsr output_hex_byte
 
     // right arrow
     iny
@@ -118,8 +187,9 @@ output_controls:
 
 
 // outputs hex byte to POINTER + y offset 
-output_byte:
+output_hex_byte:
     // save byte
+    pha
     pha
 
     // shift high byte to low byte
@@ -140,6 +210,8 @@ output_byte:
     jsr byte_to_char
     sta (POINTER),y
     iny
+
+    pla
 
     rts
 
