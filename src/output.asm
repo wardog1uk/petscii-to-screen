@@ -127,7 +127,7 @@ output_data_loop:
     iny
     lda TEMP
     jsr convert_to_screen
-    jsr output_hex_byte
+    jsr output_value
 
     iny
     sta (POINTER),y
@@ -147,7 +147,7 @@ output_data_loop:
     iny
     lda TEMP2
     jsr convert_to_screen
-    jsr output_hex_byte
+    jsr output_value
 
     iny
     sta (POINTER),y
@@ -189,6 +189,22 @@ output_controls:
     lda #$3e
     sta (POINTER),y
 
+    rts
+
+
+output_value:
+    // check if unprintable
+    bcs !+
+    jsr output_hex_byte
+    rts
+
+    // handle unprintable character
+!:  lda #'x'
+    sta (POINTER),y
+    iny
+    sta (POINTER),y
+    iny
+    lda #' '
     rts
 
 
