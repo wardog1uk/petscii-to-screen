@@ -2,6 +2,7 @@
 
 // --------------------------------------------------------
 // Convert A from petscii to screen code
+// clears carry if converted, sets carry if unprintable
 convert_to_screen:
     // check if shifted (128 to 255)
     cmp #128
@@ -18,8 +19,8 @@ convert_unshifted:
     // branch if printable
     bcs convert_unshifted_printable
 
-    // else set to 0 and return
-    lda #0
+    // else set carry and return
+    sec
     rts
 
 
@@ -35,6 +36,7 @@ convert_unshifted_printable:
 convert_unshifted_symbols:
     // subtract 32 and return
     and #%11011111  // $df
+    clc
     rts
 
 
@@ -55,8 +57,8 @@ convert_shifted:
     // branch if printable
     bcs convert_shifted_printable
 
-    // else set to 0 and return
-    lda #0
+    // else set carry and return
+    sec
     rts
 
 
@@ -68,6 +70,7 @@ convert_shifted_printable:
 
     // was 255 so make it the correct screen value
     lda #94
+    clc
     rts
 
 !:  // remove top bit to subtract 128
@@ -81,5 +84,6 @@ convert_shifted_printable:
     // else add 64 to 32 to 63 (was 160 to 191)
     ora #%01000000
 
-!:  rts
+!:  clc
+    rts
 // --------------------------------------------------------
