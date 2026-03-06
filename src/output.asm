@@ -18,6 +18,8 @@ TITLE:
     .text TITLE_TEXT
     .byte 0
 
+.const SCREEN_WIDTH = 40
+
 
 *=* "Output"
 output:
@@ -26,13 +28,14 @@ output:
 
     jsr clear_screen
 
-    // output header
-    lda #40
+
+output_header:
+    lda #SCREEN_WIDTH
     sta POINTER
     lda #$04
     sta POINTER+1
 
-    ldy #(40-TITLE_TEXT.size())/2
+    ldy #(SCREEN_WIDTH - TITLE_TEXT.size())/2
     ldx #0
 
 !:  lda TITLE,x
@@ -105,7 +108,7 @@ output_data:
     sta TEMP2
 
     // point to first line
-    lda #$c8
+    lda #SCREEN_WIDTH * 5
     sta POINTER
     lda #$04
     sta POINTER+1
@@ -156,7 +159,7 @@ output_data_loop:
     // move to next line
     lda POINTER
     clc
-    adc #40
+    adc #SCREEN_WIDTH
     bcc !+
     inc POINTER+1
 !:  sta POINTER
