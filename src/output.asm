@@ -113,9 +113,10 @@ output_data:
     sta TEMP2
 
     // point to first line
-    lda #SCREEN_WIDTH * 5
+    .var first_line = SCREEN_START + SCREEN_WIDTH * 5
+    lda #<first_line
     sta POINTER
-    lda #$04
+    lda #>first_line
     sta POINTER+1
 
     ldx #16
