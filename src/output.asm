@@ -1,3 +1,10 @@
+// screen size
+.const SCREEN_WIDTH = 40
+.const SCREEN_HEIGHT = 25
+
+// address of the start of the screen in memory
+.const SCREEN_START = $0400
+
 .const POINTER = $fb
 
 // zp address for the first byte to display
@@ -18,8 +25,6 @@ TITLE:
     .text TITLE_TEXT
     .byte 0
 
-.const SCREEN_WIDTH = 40
-
 
 *=* "Output"
 output:
@@ -30,9 +35,9 @@ output:
 
 
 output_header:
-    lda #SCREEN_WIDTH
+    lda #<SCREEN_START + SCREEN_WIDTH
     sta POINTER
-    lda #$04
+    lda #>SCREEN_START + SCREEN_WIDTH
     sta POINTER+1
 
     ldy #(SCREEN_WIDTH - TITLE_TEXT.size())/2
@@ -171,9 +176,10 @@ output_data_loop:
 
 
 output_controls:
-    lda #$c0
+    .var control_address = SCREEN_START + SCREEN_WIDTH * (SCREEN_HEIGHT - 1)
+    lda #<control_address
     sta POINTER
-    lda #$07
+    lda #>control_address
     sta POINTER+1
 
     // left arrow
