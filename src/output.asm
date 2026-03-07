@@ -1,3 +1,10 @@
+// screen size
+.const SCREEN_WIDTH = 40
+.const SCREEN_HEIGHT = 25
+
+// address of the start of the screen in memory
+.const SCREEN_START = $0400
+
 .const POINTER = $fb
 
 // zp address for the first byte to display
@@ -26,13 +33,15 @@ output:
 
     jsr clear_screen
 
-    // output header
-    lda #40
+
+output_header:
+    .var title_address = SCREEN_START + SCREEN_WIDTH
+    lda #<title_address
     sta POINTER
-    lda #$04
+    lda #>title_address
     sta POINTER+1
 
-    ldy #(40-TITLE_TEXT.size())/2
+    ldy #(SCREEN_WIDTH - TITLE_TEXT.size()) / 2
     ldx #0
 
 !:  lda TITLE,x
@@ -105,9 +114,10 @@ output_data:
     sta TEMP2
 
     // point to first line
-    lda #$c8
+    .var first_line = SCREEN_START + SCREEN_WIDTH * 5
+    lda #<first_line
     sta POINTER
-    lda #$04
+    lda #>first_line
     sta POINTER+1
 
     ldx #16
@@ -156,7 +166,7 @@ output_data_loop:
     // move to next line
     lda POINTER
     clc
-    adc #40
+    adc #SCREEN_WIDTH
     bcc !+
     inc POINTER+1
 !:  sta POINTER
@@ -168,9 +178,10 @@ output_data_loop:
 
 
 output_controls:
-    lda #$c0
+    .var control_address = SCREEN_START + SCREEN_WIDTH * (SCREEN_HEIGHT - 1)
+    lda #<control_address
     sta POINTER
-    lda #$07
+    lda #>control_address
     sta POINTER+1
 
     // left arrow
