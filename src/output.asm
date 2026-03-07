@@ -35,12 +35,13 @@ output:
 
 
 output_header:
-    lda #<SCREEN_START + SCREEN_WIDTH
+    .var title_address = SCREEN_START + SCREEN_WIDTH
+    lda #<title_address
     sta POINTER
-    lda #>SCREEN_START + SCREEN_WIDTH
+    lda #>title_address
     sta POINTER+1
 
-    ldy #(SCREEN_WIDTH - TITLE_TEXT.size())/2
+    ldy #(SCREEN_WIDTH - TITLE_TEXT.size()) / 2
     ldx #0
 
 !:  lda TITLE,x
